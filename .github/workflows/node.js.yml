@@ -16,7 +16,7 @@ jobs:
       - name: Build and Deploy
         uses: JamesIves/github-pages-deploy-action@main
         env:
-          ACCESS_TOKEN: ${{ secrets.page }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           BRANCH: gh-pages
           FOLDER: docs/.vuepress/dist
           BUILD_SCRIPT: npm install && npm run docs:build
