@@ -29,7 +29,9 @@ watchEffect(() => {
 - 在访问数据和赋值时需要添加`.value`
 - 在模板视图中访问数据，视图和数据会双向绑定
 
-> 双向绑定可以通过`发布-订阅者`模式来实现，`.value`可以通过`class`的实例来实现，那么`ref()`函数返回的就是对应的实例
+::: tip
+双向绑定可以通过`发布-订阅者`模式来实现，`.value`可以通过`class`的实例来实现，那么`ref()`函数返回的就是对应的实例
+:::
 
 ### 创建RefImf类
 
@@ -55,7 +57,7 @@ class RefImf {
 
 2. 第二步实现`value`值转化, 判断是否是`object`
 
-``` typescript
+``` typescript{8-9}
 class RefImf {
   // 原始数据
   private _rawValue;
@@ -82,7 +84,7 @@ class RefImf {
 
 当获取值时，要将其获取请求者加入依赖列表中，当自身的值发生变化时进行逐一通知，也就是`发布者——订阅`模式
 
-``` typescript
+``` typescript{5,12-13,18,23-24,28-30}
 class RefImf {
   // 原始数据
   private _rawValue;
@@ -152,7 +154,7 @@ const effect = (fn: Function) => {
 ```
 
 2. 模拟运行环境
-```typescript
+```typescript{1,6-12,17}
 let shouldTrack = false
 
 class ReactiveEffect {
@@ -171,4 +173,213 @@ const effect = (fn: Function) => {
 
   _effect.run()
 }
+```
+
+3. 判断是否可以添加依赖
+
+```typescript{2,10,15,25-28}
+let shouldTrack = false;
+let activeEffect = void 0;  // 相当于undefined
+
+class ReactiveEffect {
+  constructor(public fn: Function) {}
+
+  // 真正的运行环境
+  run() {
+    shouldTrack = true;
+    activeEffect = this;
+
+    this.fn()
+
+    shouldTrack = false;
+    activeEffect = undefined;
+  }
+}
+
+const effect = (fn: Function) => {
+  const _effect = new ReactiveEffect(fn);
+
+  _effect.run()
+}
+
+// 判断是否可以添加依赖
+const isTracking = () => {
+  return shouldTrack && activeEffect !== undefined;
+}
+```
+
+4. 依赖收集
+
+```ts{5,31-36,38-44}
+let shouldTrack = false;
+let activeEffect = void 0;  // 相当于undefined
+
+class ReactiveEffect {
+  private deps = [];
+  constructor(public fn: Function) {}
+
+  // 真正的运行环境
+  run() {
+    shouldTrack = true;
+    activeEffect = this;
+
+    this.fn()
+
+    shouldTrack = false;
+    activeEffect = undefined;
+  }
+}
+
+const effect = (fn: Function) => {
+  const _effect = new ReactiveEffect(fn);
+
+  _effect.run()
+}
+
+// 判断是否可以添加依赖
+const isTracking = () => {
+  return shouldTrack && activeEffect !== undefined;
+}
+
+// 收集Ref的依赖
+const trackRef = (ref: RefImf) => {
+  if (isTracking()) {
+    trackEffects(ref.deps);
+  }
+}
+
+// 依赖收集
+const trackEffects = (dep: Set<any>) => {
+  if (!dep.has(activeEffect)) {
+    dep.add(activeEffect);
+    (activeEffect as any).push(dep);
+  }
+}
+
+```
+我们可以看到`trackRef`函数是在获取`ref`数据的时候开始进行依赖的收集，首先判断是否可以收集依赖，判断可以后调用`trackEffects`函数将依赖`RefImf.deps`添加进`ReactiveEffect.deps`中
+
+::: details 辅助理解
+可以将`ReactiveEffec`的实例看作vue3中的`watchEffect`函数，其`deps`数组存放着响应性数据的依赖关系
+:::
+
+5. 触发依赖
+
+当响应式数据发生变化时，需要逐一通知其订阅者，运行对应的函数
+
+```ts{46-49,51-56}
+let shouldTrack = false;
+let activeEffect = void 0;  // 相当于undefined
+
+class ReactiveEffect {
+  private deps = [];
+  constructor(public fn: Function) {}
+
+  // 真正的运行环境
+  run() {
+    shouldTrack = true;
+    activeEffect = this;
+
+    this.fn()
+
+    shouldTrack = false;
+    activeEffect = undefined;
+  }
+}
+
+const effect = (fn: Function) => {
+  const _effect = new ReactiveEffect(fn);
+
+  _effect.run()
+}
+
+// 判断是否可以添加依赖
+const isTracking = () => {
+  return shouldTrack && activeEffect !== undefined;
+}
+
+// 收集Ref的依赖
+const trackRef = (ref: RefImf) => {
+  if (isTracking()) {
+    trackEffects(ref.deps);
+  }
+}
+
+// 依赖收集
+const trackEffects = (dep: Set<any>) => {
+  if (!dep.has(activeEffect)) {
+    dep.add(activeEffect);
+    (activeEffect as any).push(dep);
+  }
+}
+
+// ref值变化，触发依赖
+const triggerRef = (ref: RefImf) => {
+  triggerEffects(ref.deps);
+};
+
+// 触发依赖
+export const triggerEffects = (dep: Set<any>) => {
+  for (const effect of dep) {
+    effect.run()
+  }
+};
+```
+
+6. 最后来个收尾之作，当不再需要进行触发依赖时（退出了环境）
+
+新增 `ReactiveEffect`类`active`成员变量进行控制
+
+```ts{3,6-8}
+class ReactiveEffect {
+  ...
+  private active = false;
+
+  run () {
+    if (!this.active) {
+      return;
+    }
+
+    ...
+  }
+
+  ...
+}
+```
+
+### 单元测试
+
+```ts
+import { effect } from "../effect";
+import { ref } from "../ref";
+
+describe("ref", () => {
+  it("base function", () => {
+    const count = ref(0);
+    count.value += 1;
+    expect(count.value).toBe(1);
+  });
+
+  it("reactive", () => {
+    const count = ref(0);
+    let temp = -1;
+    let calls = 0;
+
+    effect(() => {
+      calls++;
+      temp = count.value;
+    });
+    expect(calls).toBe(1);
+    expect(temp).toBe(0);
+
+    count.value += 1;
+    expect(calls).toBe(2);
+    expect(temp).toBe(1);
+
+    count.value = 1;
+    expect(calls).toBe(2);
+    expect(temp).toBe(1);
+  });
+});
+
 ```
