@@ -57,7 +57,7 @@ class RefImf {
 
 2. 第二步实现`value`值转化, 判断是否是`object`
 
-``` typescript{8-9}
+``` typescript{8-9,18}
 class RefImf {
   // 原始数据
   private _rawValue;
