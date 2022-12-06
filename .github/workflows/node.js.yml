@@ -41,12 +41,25 @@ jobs:
         uses: actions/checkout@v2 # If you're using actions/checkout@v2 - must set persist-credentials to false in most cases for the deployment to work correctly.
         with:
           persist-credentials: false
-        
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Cache
+        uses: actions/cache@v2
+        env:
+            cache-name: cache-nodemodules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
       - name: Install and Build
         run: |
           npm install
           npm run docs:build
-
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
