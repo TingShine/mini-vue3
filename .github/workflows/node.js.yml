@@ -29,7 +29,7 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-      - name: Install Dependence
+      - name: Install Dependencies
         run: npm install
       - name: Run Test
         run: npm run test
@@ -52,3 +52,4 @@ jobs:
         with:
           branch: gh-pages
           folder: docs/.vuepress/dist
+    needs: [test]
