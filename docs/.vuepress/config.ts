@@ -10,15 +10,23 @@ export default defineUserConfig({
   description: "学习vue3源码，再造框架",
   theme: defaultTheme({
     repo: "https://github.com/TingShine/mini-vue3.git",
-    sidebar: [
+    sidebarDepth: 3,
+    sidebar:  [
       {
-        text: "介绍",
-        link: "/guide",
+        text: '介绍',
+        collapsible: true,
+        children: [
+          '/guide/readme.md'
+        ]
       },
-      {
-        text: "响应式",
-        link: "/guide/reactive",
-      },
-    ],
+        {
+          text: '响应式',
+          collapsible: true,
+          children: [
+            '/reactive/ref.md',
+            '/reactive/reactive.md'
+          ]
+        }
+      ]
   }),
 });

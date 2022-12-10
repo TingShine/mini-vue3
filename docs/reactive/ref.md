@@ -1,10 +1,8 @@
-# 响应式
+# Ref
 
 vue框架的核心特性之一就是响应式，vue是一个MVVM框架，即视图——模型双向绑定：更新数据，对应的视图随着更新；同时在视图更新，对应的数据模型也会随着更新。
 
-
-
-## Ref
+## 分析
 
 通过使用`ref`双向绑定的vue单文件样例，来分析响应式数据需要实现的功能特性：
 ```vue
@@ -33,9 +31,9 @@ watchEffect(() => {
 双向绑定可以通过`发布-订阅者`模式来实现，`.value`可以通过`class`的实例来实现，那么`ref()`函数返回的就是对应的实例
 :::
 
-### 创建RefImf类
+## 创建RefImf类
 
-1. 第一步实现`.value`的特性
+### 1. 实现`.value`的特性
 
 ``` typescript
 class RefImf {
@@ -55,7 +53,9 @@ class RefImf {
 }
 ```
 
-2. 第二步实现`value`值转化, 判断是否是`object`
+### 2. 实现`value`值转化
+
+ 判断是否是`object`
 
 ``` typescript{8-9,18}
 class RefImf {
@@ -80,7 +80,7 @@ class RefImf {
 }
 ```
 
-3. 第三步实现依赖收集
+### 3. 模拟依赖收集
 
 当获取值时，要将其获取请求者加入依赖列表中，当自身的值发生变化时进行逐一通知，也就是`发布者——订阅`模式
 
@@ -129,7 +129,7 @@ const createDep = (effects?: any) => {
 
 在代码中我们可以看到`trackRef`用于依赖收集，`triggerRef`用于在改变值的时候通知订阅者，映射到实际场景中就是在视图模板中引用到了数据的时候，响应式数据进行依赖收集，当数据变化时通知视图，视图改变数据时直接修改`RefImf`实例中的值
 
-### 依赖收集
+## 依赖收集和触发
 
 我们需要模拟在`vue`框架下实现双向绑定的过程，这里我们使用`effect`函数来暂时替代，通过在函数内运行模拟环境，具体示例如下：
 
@@ -141,7 +141,7 @@ effect(() => {
 
 要实现上述思路，需要我们在传入`effect`函数的参数也为函数`Fn`，在`Fn`运行前开始允许依赖收集，`Fn`结束后禁止依赖收集
 
-1. 创建`ReactiveEffect`类和`effect`函数
+### 1. 创建`ReactiveEffect`类和`effect`函数
 
 ```typescript
 class ReactiveEffect {
@@ -153,7 +153,7 @@ const effect = (fn: Function) => {
 }
 ```
 
-2. 模拟运行环境
+### 2. 模拟运行环境
 ```typescript{1,6-12,17}
 let shouldTrack = false
 
@@ -175,7 +175,7 @@ const effect = (fn: Function) => {
 }
 ```
 
-3. 判断是否可以添加依赖
+### 3. 判断是否可以添加依赖
 
 ```typescript{2,10,15,25-28}
 let shouldTrack = false;
@@ -208,7 +208,7 @@ const isTracking = () => {
 }
 ```
 
-4. 依赖收集
+### 4. 依赖收集
 
 ```ts{5,31-36,38-44}
 let shouldTrack = false;
@@ -263,7 +263,7 @@ const trackEffects = (dep: Set<any>) => {
 可以将`ReactiveEffec`的实例看作vue3中的`watchEffect`函数，其`deps`数组存放着响应性数据的依赖关系
 :::
 
-5. 触发依赖
+### 5. 触发依赖
 
 当响应式数据发生变化时，需要逐一通知其订阅者，运行对应的函数
 
@@ -326,7 +326,8 @@ export const triggerEffects = (dep: Set<any>) => {
 };
 ```
 
-6. 最后来个收尾之作，当不再需要进行触发依赖时（退出了环境）
+### 6. 收尾之作
+当不再需要进行触发依赖时（退出了环境）
 
 新增 `ReactiveEffect`类`active`成员变量进行控制
 
@@ -347,7 +348,7 @@ class ReactiveEffect {
 }
 ```
 
-### 单元测试
+## 单元测试
 
 ```ts
 import { effect } from "../effect";
