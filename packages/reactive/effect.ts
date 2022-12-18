@@ -1,4 +1,5 @@
 import { extend } from "../shared/index";
+import { createDep } from "./dep";
 import { RefImf } from "./ref";
 
 let activeEffect = void 0; // 相当于undefined
@@ -66,3 +67,49 @@ export const triggerEffects = (dep) => {
     }
   }
 };
+
+const targetMap = new WeakMap()
+
+// reactive依赖收集
+export const track = (target, type, key) => {
+  // 判断是否需要收集
+  if (!isTracking()) {
+    return;
+  }
+
+  // 获取target对应的依赖关系Map
+  let depsMap = targetMap.get(target);
+  if (!depsMap) {
+    depsMap = new Map()
+    targetMap.set(target, depsMap)
+  }
+
+  // 获取key对应的依赖关系Set
+  let dep = depsMap.get(key)
+  if (!dep) {
+    dep = createDep()
+    depsMap.set(key, dep);
+  }
+
+  console.log('track收集');
+  
+  trackEffects(dep);
+}
+
+// 触发reactive依赖
+export const trigger = (target, type, key) => {
+  const depsMap = targetMap.get(target)
+  if (!depsMap) {
+    return;
+  } 
+
+  const depSet = depsMap.get(key);
+  if (!depSet) {
+    return;
+  }
+
+  const deps = [...depSet];
+  console.log('trigger 触发');
+  
+  triggerEffects(createDep(deps));
+}
