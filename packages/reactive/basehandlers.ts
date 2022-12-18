@@ -20,7 +20,7 @@ const set = (target, key, value, reciever) => {
   const result = Reflect.set(target, key, value, reciever)
 
   // 触发依赖
-  trigger(target, key, "set");
+  trigger(target, key);
 
   return result
 }

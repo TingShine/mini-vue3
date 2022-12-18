@@ -91,13 +91,12 @@ export const track = (target, type, key) => {
     depsMap.set(key, dep);
   }
 
-  console.log('track收集');
   
   trackEffects(dep);
 }
 
 // 触发reactive依赖
-export const trigger = (target, type, key) => {
+export const trigger = (target, key) => {
   const depsMap = targetMap.get(target)
   if (!depsMap) {
     return;
@@ -109,7 +108,6 @@ export const trigger = (target, type, key) => {
   }
 
   const deps = [...depSet];
-  console.log('trigger 触发');
   
   triggerEffects(createDep(deps));
 }
