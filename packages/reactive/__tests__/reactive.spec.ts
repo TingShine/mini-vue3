@@ -25,6 +25,6 @@ describe("reactive", () => {
     expect(calls).toBe(1);
     form.count += 1;
     expect(calls).toBe(2);
-    expect(form.count).toBe(1);
+    expect(form.count).toBe(2);
   })
 })
