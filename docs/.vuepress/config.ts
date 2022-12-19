@@ -23,6 +23,7 @@ export default defineUserConfig({
           text: '响应式',
           collapsible: true,
           children: [
+            '/reactive/effect.md',
             '/reactive/ref.md',
             '/reactive/reactive.md'
           ]
