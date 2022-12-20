@@ -16,7 +16,8 @@ export default defineUserConfig({
         text: '介绍',
         collapsible: true,
         children: [
-          '/guide/readme.md'
+          '/guide/readme.md',
+          '/guide/about.md'
         ]
       },
         {
