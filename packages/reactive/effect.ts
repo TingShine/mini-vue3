@@ -90,7 +90,6 @@ export const track = (target, type, key) => {
     dep = createDep()
     depsMap.set(key, dep);
   }
-
   
   trackEffects(dep);
 }

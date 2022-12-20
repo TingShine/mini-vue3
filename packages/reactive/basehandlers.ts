@@ -25,7 +25,7 @@ const set = (target, key, value, reciever) => {
   return result
 }
 
-export const baseHandlers = {
+export const mutableHandlers = {
   get,
   set
 }

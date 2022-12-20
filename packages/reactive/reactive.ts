@@ -1,4 +1,4 @@
-import { baseHandlers } from "./basehandlers";
+import { mutableHandlers } from "./basehandlers";
 
 const targetMap = new WeakMap()
 
@@ -8,17 +8,17 @@ export enum ReactiveFlags {
 }
 
 export function reactive (target) {
-  return createReactiveObject(target);
+  return createReactiveObject(target, targetMap, mutableHandlers);
 }
 
-export function createReactiveObject (target) {
-  const existPrpxy = targetMap.get(target)
+export function createReactiveObject (target, proxyMap, baseHandlers) {
+  const existPrpxy = proxyMap.get(target)
   if (existPrpxy) {
     return existPrpxy;
   }
 
   const proxy = new Proxy(target, baseHandlers)
-  targetMap.set(target, proxy)
+  proxyMap.set(target, proxy)
   
   return proxy
 }
