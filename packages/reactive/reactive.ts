@@ -1,6 +1,6 @@
 import { baseHandlers } from "./basehandlers";
 
-const targetMap = new Map()
+const targetMap = new WeakMap()
 
 export enum ReactiveFlags {
   RAW = '_v_raw_',
