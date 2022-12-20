@@ -89,7 +89,7 @@ class RefImf {
   // 原始数据
   private _rawValue;
   private _value;
-  private deps;
+  public deps;
 
   constructor(initialValue) {
     this._rawValue = initialValue;
@@ -131,9 +131,36 @@ const createDep = (effects?: any) => {
 
 ## 依赖收集和触发
 
-在上述教程中收集依赖使用的是`trackRef`，触发依赖使用的是`triggerRef`，参数都是自身的实例，在这个过程中我们需要与上一篇[Effect](./effect.md)挂钩，我们使用`Effect`来作为订阅者，而`RefImf`作为发布者，当在`Effect`的参数函数中读取到`RefImf`的zhi
+在上述教程中收集依赖使用的是`trackRef`，触发依赖使用的是`triggerRef`，参数都是自身的实例，在这个过程中我们需要与上一篇 [Effect](./effect.md) 挂钩。
+
+我们使用`Effect`来作为订阅者，而`RefImf`作为发布者，当在`Effect`的参数函数中读取到`RefImf`的值时，`Effect`的`ReactiveEffect`实例作为依赖添加到`RefImf`的`deps`中，当`RefImf`的`value`值发生变化时，会通知`deps`的集合，具体的操作是遍历集合，依次调用依赖集合的实例的`run`函数，也就是运行`Effect`的副作用函数。
+
+### 1. 依赖收集
+
+首先，我们来实现`trackRef`函数，参数为`RefImf`实例：
+```ts
+export const trackRef = (instance: RefImf) => {
+  if (isTracking()) {
+    trackEffect(instance.deps)
+  }
+}
+```
+
+其中`isTracking`和`trackEffect`函数都已经在 [Effect](./effect.md) 篇章中实现，主要作用是判断是否可以添加依赖和收集依赖，其中判断是否重复添加依赖已经在`trackEffect`中实现
+
+### 2. 触发依赖
+
+当`RefImf`的`value`成员发生变更时，触发依赖是`triggerRef`函数，实现如下代码：
+```ts
+export const triggerRef = (instance: RefImf) => {
+  triggerEffect(instance.deps)
+}
+```
+同样，`triggerEffect`在 [Effect](./effect.md) 篇章中实现，这里就不再赘述
 
 ## 单元测试
+
+单元测试使用`jest`进行测试，主要验证其基本的取值、赋值和响应式
 
 ```ts
 import { effect } from "../effect";
