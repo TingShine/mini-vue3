@@ -292,3 +292,57 @@ export function reactive (target) {
   return createReactiveObject(target, targetMap, mutableHandlers);
 }
 ```
+
+### 2. get逻辑抽取
+
+我们在`mutableHandlers`直接使用`get`和`set`两个拦截操作，`get`可以被`readonly`和`shallowReadonly`复用，所以让我们来改造一下
+
+```ts
+export const createGetter = (readonly = false, shallow = false) => {
+  return (target, key, receiver) => {
+    track(target, "get", key);
+  
+    return Reflect.get(target, key, receiver);
+  }
+}
+
+// reavtive
+const get = createGetter()
+
+export const mutableHandlers = {
+  get,
+  set
+}
+```
+
+上面的代码将`get`相同逻辑抽取到`createGetter`中，通过传参的方式来区分不同的拦截类型
+
+### 3. get拦截优化
+
+在获取`reactive`返回的`proxy`时，如果要获取其原对象，和判断是否为`reactive`数据，我们需要对某些特定的`key`进行单独的处理返回，这里我们选用`_v_raw_`和`_v_isReactive`两个`key`来进行单独处理
+
+```ts
+// 枚举
+export enum ReactiveFlags {
+  RAW = '_v_raw_',
+  IS_REACTIVE = '_v_isReactive'
+}
+
+export const createGetter = (readonly = false, shallow = false) => {
+  return (target, key, receiver) => {
+    // 获取原对象
+    if (key === ReactiveFlags.RAW && targetMap.get(target) === receiver) {
+      return target
+    }
+  
+    // 获取是否为reactive对象
+    if (key === ReactiveFlags.IS_REACTIVE) {
+      return true
+    }
+  
+    track(target, "get", key);
+  
+    return Reflect.get(target, key, receiver);
+  }
+}
+```
