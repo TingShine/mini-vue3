@@ -8,12 +8,12 @@ export const createGetter = (isReadonly = false, shallowReadonly = false) => {
     const isExistReadonlyMap = () => key === ReactiveFlags.RAW && readonlyMap.get(target) === receiver
     const isExistShallowReadonlyMap = () => key === ReactiveFlags.RAW && shallowReadonlyMap.get(target) === receiver
 
-    // 获取原对象
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly
     } else if (key === ReactiveFlags.IS_READONLY) {
       return isReadonly
     } else if (
+      // 使用函数如果满足前面条件，后面可以不用计算取值
       isExistReactiveMap() ||
       isExistReadonlyMap() ||
       isExistShallowReadonlyMap()
@@ -23,10 +23,12 @@ export const createGetter = (isReadonly = false, shallowReadonly = false) => {
 
     const result = Reflect.get(target, key, receiver);
 
+    // readonly无法set，即无法trigger
     if (!isReadonly) {
       track(target, "get", key);
     }
 
+    // shallowReadonly直接返回
     if (shallowReadonly) {
       return result
     }
@@ -53,7 +55,6 @@ export const createSetter = () => {
 // reavtive
 const get = createGetter()
 const set = createSetter()
-
 export const mutableHandlers = {
   get,
   set
@@ -67,7 +68,6 @@ const readonlySet = (target, key) => {
 
   return true
 }
-
 export const readonlyHandlers = {
   get: readonlyGet,
   set: readonlySet
@@ -80,7 +80,6 @@ const shallowReadonlySet = (target, key) => {
 
   return true
 }
-
 export const shallowReadonlyHandlers = {
   get: shallowGet,
   set: shallowReadonlySet
