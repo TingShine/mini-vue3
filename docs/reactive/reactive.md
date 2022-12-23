@@ -300,7 +300,7 @@ export function reactive (target) {
 ```ts
 export const createGetter = (readonly = false, shallow = false) => {
   return (target, key, receiver) => {
-    track(target, "get", key);
+    track(target, key, 'get')
   
     return Reflect.get(target, key, receiver);
   }
@@ -340,9 +340,98 @@ export const createGetter = (readonly = false, shallow = false) => {
       return true
     }
   
-    track(target, "get", key);
+    track(target, key, 'get')
   
     return Reflect.get(target, key, receiver);
   }
 }
+
+```
+
+同时，`reactive`是深层次的，所以如果其里面的值是对象的话，也需要进行`reactive`处理：
+
+```ts{19,23-25,27}
+// 枚举
+export enum ReactiveFlags {
+  RAW = '_v_raw_',
+  IS_REACTIVE = '_v_isReactive'
+}
+
+export const createGetter = (readonly = false, shallow = false) => {
+  return (target, key, receiver) => {
+    // 获取原对象
+    if (key === ReactiveFlags.RAW && targetMap.get(target) === receiver) {
+      return target
+    }
+  
+    // 获取是否为reactive对象
+    if (key === ReactiveFlags.IS_REACTIVE) {
+      return true
+    }
+  
+    const result = Reflect.get(target, key, receiver);
+
+    track(target, key, 'get')
+
+    if (isObject(result)) {
+      return reactive(result)
+    }
+
+    return result
+  }
+}
+```
+
+## 单元测试
+
+```ts
+describe("reactive", () => {
+  it('base function', () => {
+    const form = reactive({
+      username: 'hello',
+      password: 'world'
+    })
+
+    form.username = `${form.username} ${form.password}`
+    expect(form.username).toBe('hello world')
+  }),
+  it('reactibility', () => {
+    const form = reactive({
+      count: 1,
+    })
+    let calls = 0;
+    let sum = 0
+
+    effect(() => {
+      sum += form.count
+      calls++;
+    })
+
+    expect(calls).toBe(1);
+    form.count += 1;
+    expect(calls).toBe(2);
+    expect(form.count).toBe(2);
+    expect(sum).toBe(3)
+  }),
+  it('deep reactibility', () => {
+    const form = reactive({
+      inner: {
+        count: 1
+      }
+    })
+    let sum = 0
+    let calls = 0
+
+    effect(() => {
+      sum += form.inner.count ;
+      calls++
+    })
+
+    expect(form.inner.count).toBe(1)
+    form.inner.count += 1;
+    expect(form.inner.count).toBe(2)
+    expect(calls).toBe(2)
+    expect(sum).toBe(3)
+  })
+})
 ```

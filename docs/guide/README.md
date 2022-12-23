@@ -8,3 +8,5 @@
   - [effect](/reactive/effect.md)
   - [ref](/reactive/ref.md)
   - [reactive](/reactive/reactive.md)
+  - [readonly](/reactive/readonly.md)
+  - [shallowReadonly](/reactive/shallowReadonly.md)
