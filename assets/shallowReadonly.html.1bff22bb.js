@@ -1,0 +1,1 @@
+const e=JSON.parse('{"key":"v-31174320","path":"/reactive/shallowReadonly.html","title":"ShallowReadoly","lang":"zh-CN","frontmatter":{},"excerpt":"","headers":[],"git":{"updatedTime":1671791754000,"contributors":[{"name":"shine","email":"791405318@qq.com","commits":1}]},"filePathRelative":"reactive/shallowReadonly.md"}');export{e as data};

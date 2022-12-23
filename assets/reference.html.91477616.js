@@ -1,1 +1,0 @@
-const e=JSON.parse('{"key":"v-a47e59aa","path":"/reactive/reference.html","title":"Reference","lang":"zh-CN","frontmatter":{},"excerpt":"","headers":[],"git":{"updatedTime":1671639197000,"contributors":[{"name":"shine","email":"791405318@qq.com","commits":1}]},"filePathRelative":"reactive/reference.md"}');export{e as data};

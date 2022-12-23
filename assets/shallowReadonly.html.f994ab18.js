@@ -1,0 +1,1 @@
+import{_ as a,o,c as l,a as e,d as s}from"./app.cec32917.js";const t={},r=e("h1",{id:"shallowreadoly",tabindex:"-1"},[e("a",{class:"header-anchor",href:"#shallowreadoly","aria-hidden":"true"},"#"),s(" ShallowReadoly")],-1),c=[r];function d(n,_){return o(),l("div",null,c)}const i=a(t,[["render",d],["__file","shallowReadonly.html.vue"]]);export{i as default};
