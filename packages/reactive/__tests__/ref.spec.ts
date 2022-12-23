@@ -1,5 +1,4 @@
-import { effect } from "../effect";
-import { ref } from "../ref";
+import { effect, ref } from "..";
 
 describe("ref", () => {
   it("base function", () => {

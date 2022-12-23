@@ -1,5 +1,4 @@
-import { effect } from "../effect";
-import { reactive } from '../reactive';
+import { effect, reactive } from "..";
 
 describe("reactive", () => {
   it('base function', () => {
@@ -13,12 +12,13 @@ describe("reactive", () => {
   }),
   it('reactibility', () => {
     const form = reactive({
-      count: 1
+      count: 1,
     })
     let calls = 0;
+    let sum = 0
 
     effect(() => {
-      console.log(form.count);
+      sum += form.count
       calls++;
     })
 
@@ -26,5 +26,26 @@ describe("reactive", () => {
     form.count += 1;
     expect(calls).toBe(2);
     expect(form.count).toBe(2);
+    expect(sum).toBe(3)
+  }),
+  it('deep reactibility', () => {
+    const form = reactive({
+      inner: {
+        count: 1
+      }
+    })
+    let sum = 0
+    let calls = 0
+
+    effect(() => {
+      sum += form.inner.count ;
+      calls++
+    })
+
+    expect(form.inner.count).toBe(1)
+    form.inner.count += 1;
+    expect(form.inner.count).toBe(2)
+    expect(calls).toBe(2)
+    expect(sum).toBe(3)
   })
 })
