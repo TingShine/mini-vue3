@@ -27,6 +27,7 @@ export default defineUserConfig({
             '/reactive/effect.md',
             '/reactive/ref.md',
             '/reactive/reactive.md',
+            '/reactive/computed.md',
             '/reactive/readonly.md',
             '/reactive/shallowReadonly.md',
           ]

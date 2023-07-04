@@ -1,4 +1,5 @@
 import { effect, shallowReadonly } from '..';
+import { describe, it, expect } from 'vitest';
 
 describe('shallowReadonly', () => {
   it ('base', () => {

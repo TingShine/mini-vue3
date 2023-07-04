@@ -1,4 +1,5 @@
 import { effect, reactive } from "..";
+import { describe, it, expect } from 'vitest';
 
 describe("reactive", () => {
   it('base function', () => {

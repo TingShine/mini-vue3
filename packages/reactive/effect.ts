@@ -28,7 +28,7 @@ export class ReactiveEffect {
   }
 }
 
-const trackEffects = (dep: Set<any>) => {
+export const trackEffects = (dep: Set<any>) => {
   if (!dep.has(activeEffect)) {
     dep.add(activeEffect);
     (activeEffect as any).deps.push(dep);

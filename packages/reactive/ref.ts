@@ -1,6 +1,7 @@
 import { hasChanged, isObject } from "../shared";
+import { ComputedRefImpl } from "./computed";
 import { createDep } from "./dep";
-import { trackRef, triggerEffects } from "./effect";
+import { isTracking, trackRef, triggerEffects, trackEffects} from "./effect";
 
 export class RefImf {
   private _rawValue: any;
@@ -43,3 +44,15 @@ const convert = (value) => value;
 const triggerRef = (ref: RefImf) => {
   triggerEffects(ref.dep);
 };
+
+export const trackRefValue = (ref: RefImf | ComputedRefImpl) => {
+  if (isTracking()) {
+    trackEffects(ref.dep)
+  }
+}
+
+export const triggerRefValue = (ref: RefImf | ComputedRefImpl) => {
+  if (isTracking()) {
+    triggerEffects(ref.dep);
+  }
+}

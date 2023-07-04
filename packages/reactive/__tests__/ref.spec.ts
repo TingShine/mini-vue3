@@ -1,4 +1,5 @@
 import { effect, ref } from "..";
+import { describe, it, expect } from 'vitest';
 
 describe("ref", () => {
   it("base function", () => {
