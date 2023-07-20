@@ -92,7 +92,7 @@ class ComputedRefImf {
   public effect: ReactiveEffect;
   public _value: any;
 
-  // 是否是脏数据
+  // 是否是脏数据，避免重复计算
   public _dirty: boolean;
 
   constructor(getter) {

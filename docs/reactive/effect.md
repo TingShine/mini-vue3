@@ -1,6 +1,6 @@
 # Effect
 
-在创建响应式示例之前，我们需要有运行示例的"`vue环境`"，这里我们模拟vue3框架中的`watchEffect`为运行响应式的环境，创建`effect`运行环境
+在创建响应式示例之前，我们需要有运行示例的"`vue环境`"，这里我们模拟vue3框架中的`template`为运行响应式的环境，创建`effect`运行环境，即`MVVM`模型中的`View`环境
 
 ## 实现分析
 
@@ -119,6 +119,10 @@ const isTracking = () => {
 }
 ```
 
+### 4. 思维导图
+<img src="/effect.png">
+
+
 ## 依赖收集和触发
 
 依赖收集和触发指的是响应式数据如`ref`和`reactive`会维护一个依赖列表（订阅者列表），当数据发生变更时通知订阅者（触发`ReactiveEffect`的`run`函数）
@@ -221,6 +225,10 @@ export const triggerEffects = (dep: Set<any>) => {
   }
 };
 ```
+
+### 3. 思维导图
+<img src="/reactiveEffectTrack.png">
+<img src="/reactiveEffectTrigger.png">
 
 ## 收尾之作
 当不再需要进行触发依赖时（退出了环境）

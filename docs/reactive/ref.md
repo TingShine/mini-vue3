@@ -129,6 +129,10 @@ const createDep = (effects?: any) => {
 
 在代码中我们可以看到`trackRef`用于依赖收集，`triggerRef`用于在改变值的时候通知订阅者，映射到实际场景中就是在视图模板中引用到了数据的时候，响应式数据进行依赖收集，当数据变化时通知视图，视图改变数据时直接修改`RefImf`实例中的值
 
+### 4. 思维导图
+
+<img src="/ref.png">
+
 ## 依赖收集和触发
 
 在上述教程中收集依赖使用的是`trackRef`，触发依赖使用的是`triggerRef`，参数都是自身的实例，在这个过程中我们需要与上一篇 [Effect](./effect.md) 挂钩。
@@ -147,6 +151,8 @@ export const trackRef = (instance: RefImf) => {
 ```
 
 其中`isTracking`和`trackEffect`函数都已经在 [Effect](./effect.md) 篇章中实现，主要作用是判断是否可以添加依赖和收集依赖，其中判断是否重复添加依赖已经在`trackEffect`中实现
+
+
 
 ### 2. 触发依赖
 

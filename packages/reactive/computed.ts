@@ -7,7 +7,7 @@ export class ComputedRefImpl {
   public dep: any;
   public effect: ReactiveEffect;
 
-  // 设置_dirty防止在没有获取computed时运行effect
+  // 避免重复计算
   public _dirty: boolean;
   public _value;
 
