@@ -120,7 +120,7 @@ const isTracking = () => {
 ```
 
 ### 4. 思维导图
-<img src="/effect.png">
+<img src="/images/effect.png">
 
 
 ## 依赖收集和触发
@@ -227,8 +227,8 @@ export const triggerEffects = (dep: Set<any>) => {
 ```
 
 ### 3. 思维导图
-<img src="/reactiveEffectTrack.png">
-<img src="/reactiveEffectTrigger.png">
+<img src="/images/reactiveEffectTrack.png">
+<img src="/images/reactiveEffectTrigger.png">
 
 ## 收尾之作
 当不再需要进行触发依赖时（退出了环境）

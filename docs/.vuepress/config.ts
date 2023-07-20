@@ -8,6 +8,9 @@ export default defineUserConfig({
   lang: "zh-CN",
   title: "Mini-Vue3",
   description: "学习vue3源码，再造框架",
+  alias: {
+    
+  },
   theme: defaultTheme({
     repo: "https://github.com/TingShine/mini-vue3.git",
     sidebarDepth: 3,

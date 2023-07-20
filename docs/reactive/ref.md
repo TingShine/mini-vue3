@@ -131,7 +131,7 @@ const createDep = (effects?: any) => {
 
 ### 4. 思维导图
 
-<img src="/ref.png">
+<img src="/images/ref.png">
 
 ## 依赖收集和触发
 
