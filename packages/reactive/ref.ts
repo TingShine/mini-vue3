@@ -34,6 +34,14 @@ export const ref = (value) => {
   return createRef(value);
 };
 
+export function isRef(value) {
+  return !!value.__v_isRef;
+}
+
+export const unRef = (ref) => {
+  return isRef(ref) ? ref.value : ref;
+}
+
 export const createRef = (value) => {
   return new RefImf(value);
 };
@@ -55,4 +63,22 @@ export const triggerRefValue = (ref: RefImf | ComputedRefImpl) => {
   if (isTracking()) {
     triggerEffects(ref.dep);
   }
+}
+
+const shallowUnwrapHandlers = {
+  get(target, key, receiver) {
+    return unRef(Reflect.get(target, key, receiver));
+  },
+  set(target, key, value, receiver) {
+    const oldValue = target[key];
+    if (isRef(oldValue) && !isRef(value)) {
+      return (target[key].value = value);
+    } else {
+      return Reflect.set(target, key, value, receiver);
+    }
+  },
+};
+
+export const proxyRefs = (objectWidthRefs) => {
+  return new Proxy(objectWidthRefs, shallowUnwrapHandlers)
 }
