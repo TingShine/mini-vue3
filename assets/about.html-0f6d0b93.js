@@ -1,0 +1,1 @@
+const t=JSON.parse('{"key":"v-fc036150","path":"/guide/about.html","title":"作者介绍","lang":"zh-CN","frontmatter":{},"headers":[],"git":{"updatedTime":1693412595000,"contributors":[{"name":"TingShine","email":"791405318@qq.com","commits":1}]},"filePathRelative":"guide/about.md"}');export{t as data};
