@@ -1,13 +1,11 @@
 import { defaultTheme, defineUserConfig } from "vuepress";
-import { backToTopPlugin } from "@vuepress/plugin-back-to-top";
-import { searchPlugin } from "@vuepress/plugin-search";
 
 export default defineUserConfig({
   base: "/mini-vue3/",
-  plugins: [backToTopPlugin(), searchPlugin()],
+  plugins: [],
   lang: "zh-CN",
   title: "Mini-Vue3",
-  description: "学习vue3源码，再造框架",
+  description: "vue3源码剖析，再造框架",
   alias: {
     
   },
